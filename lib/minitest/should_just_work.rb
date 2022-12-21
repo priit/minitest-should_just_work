@@ -38,8 +38,7 @@ module Minitest
     class Error < StandardError; end
 
     class Should
-      attr_reader :left
-      attr_reader :msg
+      attr_reader :left, :msg
 
       def self.init(test) # :nodoc:
         @@test = test
@@ -47,15 +46,16 @@ module Minitest
 
       # Includes a module to extend .should with more matchers.
       def self.add(extension)
-        self.send :include, extension
+        send :include, extension
       end
 
       def initialize(left)
         @left = left
-        if test.msg
-          blaming test.msg
-          test.msg = nil
-        end
+
+        return unless test.msg
+
+        blaming test.msg
+        test.msg = nil
       end
 
       def be(right=nil) self.same(right)  if right; self; end
@@ -96,7 +96,6 @@ module Minitest
       def empty()               assert_or_refute :empty, left; end
       def satisfy(&blk)         assert_or_refute :block, &blk; end
 
-
       def match(right)          self =~ right; end
       def equal(right)          self == right; end
 
@@ -134,7 +133,7 @@ module Minitest
         method = positive? ? :assert : :refute
 
         args = [result]
-        args << msg  if msg
+        args << msg if msg
 
         test.send method, *args
       end
@@ -154,24 +153,26 @@ end
 
 # Patch MiniTest::Test:before_setup to invoke ShouldJustWork,
 # and inject the #msg and #otherwise helper.
-class MiniTest::Test
-  alias :mts_before_setup :before_setup
+module MiniTest
+  class Test
+    alias mts_before_setup before_setup
 
-  def before_setup(*a, &block)
-    MiniTest::ShouldJustWork::Should.init self
-    mts_before_setup(*a, &block)
-  end
+    def before_setup(*a, &block)
+      MiniTest::ShouldJustWork::Should.init self
+      mts_before_setup(*a, &block)
+    end
 
-  def msg(string=nil)
-    self.msg = string if string
-    @msg
-  end
+    def msg(string=nil)
+      self.msg = string if string
+      @msg
+    end
 
-  def msg=(string)
-    @msg = string
-  end
+    def msg=(string)
+      @msg = string
+    end
 
-  def otherwise(message)
-    msg message
+    def otherwise(message)
+      msg message
+    end
   end
 end
