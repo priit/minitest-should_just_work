@@ -1,6 +1,50 @@
 module Minitest
   module ShouldJustWork
     VERSION: String
-    # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+    class Error < StandardError
+    end
+
+    class Should
+      def self.init: (untyped test) -> void
+      def self.current: () -> untyped
+
+      def initialize: (untyped left) -> void
+
+      def ==: (untyped other) -> untyped
+      def !=: (untyped other) -> untyped
+      def =~: (untyped other) -> untyped
+      def >: (untyped other) -> untyped
+      def <: (untyped other) -> untyped
+      def >=: (untyped other) -> untyped
+      def <=: (untyped other) -> untyped
+
+      def throw: (?Symbol sym) { () -> untyped } -> untyped
+      def raise: (?Class exception) { () -> untyped } -> untyped
+
+      private
+
+      attr_reader left: untyped
+      attr_reader msg: String?
+
+      def test: () -> untyped
+      def positive?: () -> bool
+      def negative?: () -> bool
+      def assert_or_refute: (Symbol what, *untyped args) -> untyped
+      def refute_or_assert: (Symbol what, *untyped args) -> untyped
+      def capture: (Class exception) { () -> untyped } -> Exception?
+    end
+
+    module TestHelpers
+      def before_setup: () -> void
+      def msg: (?String? string) -> String?
+      def msg=: (String? string) -> String?
+      def otherwise: (String message) -> String?
+    end
   end
+end
+
+class Object
+  def should: () -> Minitest::ShouldJustWork::Should
+  def should_not: () -> Minitest::ShouldJustWork::Should
 end

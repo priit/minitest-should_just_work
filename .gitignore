@@ -6,3 +6,9 @@
 /pkg/
 /spec/reports/
 /tmp/
+
+# A gem's lockfile is resolved per application, not committed here.
+/Gemfile.lock
+
+# Build artifacts from `rake build` / `gem build`.
+*.gem

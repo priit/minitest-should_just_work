@@ -1,5 +1,7 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.1
+  NewCops: enable
+  SuggestExtensions: false
 
 Style/StringLiterals:
   Enabled: true
@@ -11,3 +13,34 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+
+# The Object patch belongs next to the DSL it exists for, not hidden in a file
+# of its own.
+Style/OneClassPerFile:
+  Exclude:
+    - lib/minitest/should_just_work.rb
+    - test/**/*
+
+# `obj.should == 2` is a statement by design, and `obj.should == nil` is the
+# documented way to assert nil. These three cops object to exactly that, so any
+# test suite using this gem has to switch them off.
+Lint/Void:
+  Exclude:
+    - test/**/*
+Style/NilComparison:
+  Exclude:
+    - test/**/*
+Style/NonNilCheck:
+  Exclude:
+    - test/**/*
+
+# A `describe` block covering the whole DSL is far longer than the default limit.
+Metrics/BlockLength:
+  Exclude:
+    - test/**/*
+Metrics/MethodLength:
+  Exclude:
+    - test/**/*
+Metrics/AbcSize:
+  Exclude:
+    - test/**/*
